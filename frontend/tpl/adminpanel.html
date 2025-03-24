@@ -1,0 +1,111 @@
+
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Travel Destinations Admin Panel</h2>
+        
+        <!-- Add Destination Form -->
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                Add New Destination
+            </div>
+            <div class="card-body">
+                <form id="destinationForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Price($)</label>
+                            <input type="number" class="form-control" min="0.01" step="any" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Max People</label>
+                            <input type="number" class="form-control" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Duration(days)</label>
+                            <input type="number" class="form-control" step="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" class="form-control" accept="image/*" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Add Destination</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Destinations Table -->
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                Current Destinations
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Location</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="destinationsTable">
+                            <!-- Dynamic content will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <script>
+        
+        document.getElementById('destinationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const location = this.querySelector('input[type="text"]').value;
+            const price = this.querySelector('input[type="number"]').value;
+            const imageFile = this.querySelector('input[type="file"]').files[0];
+            
+            // Read image file
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Create table row
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td><img src="${e.target.result}" class="preview-image" alt="Destination preview"></td>
+                    <td>${location}</td>
+                    <td>$${price}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Remove</button></td>
+                `;
+
+                // Add to table
+                document.getElementById('destinationsTable').appendChild(newRow);
+
+                // Reset form
+                e.target.form.reset();
+            }
+            reader.readAsDataURL(imageFile);
+});
+    </script>
