@@ -1,21 +1,20 @@
 <?php
 
-
 /**
  * @OA\Get(
  *     path="/bookings",
- *     tags={"Bookings"},
- *     summary="List all bookings",
+ *     tags={"bookings"},
+ *     summary="Return all bookings from the API.",
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
- *         description="Success",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Booking")
- *         )
+ *         description="List of bookings."
  *     )
  * )
  */
+
 
 
 Flight::route('GET /bookings', function() {
@@ -25,24 +24,26 @@ Flight::route('GET /bookings', function() {
 
 /**
  * @OA\Get(
- *     path="/bookings/{id}",
- *     tags={"Bookings"},
- *     summary="Get booking by ID",
+ *     path="/booking_by_id",
+ *     tags={"bookings"},
+ *     summary="Fetch individual booking by ID.",
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
- *         in="path",
+ *         in="query",
  *         required=true,
- *         description="ID of booking to return",
- *         @OA\Schema(type="integer")
+ *         description="Booking ID",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Successful operation",
- *         @OA\JsonContent(ref="#/components/schemas/Booking")
+ *         description="Fetch individual booking."
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="Booking not found"
+ *         response=500,
+ *         description="Bad request - missing or invalid ID."
  *     )
  * )
  */
@@ -52,124 +53,125 @@ Flight::route('GET /bookings/@id', function($id) {
     Flight::json($service->get_by_id($id));
 });
 
-
 /**
  * @OA\Get(
- *     path="/bookings/user/{user_id}",
- *     tags={"Bookings"},
- *     summary="Get bookings by user ID",
+ *     path="/booking_by_user_id",
+ *     tags={"bookings"},
+ *     summary="Fetch individual bookings by User ID.",
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Parameter(
- *         name="user_id",
- *         in="path",
+ *         name="id",
+ *         in="query",
  *         required=true,
- *         description="ID of user",
- *         @OA\Schema(type="integer")
+ *         description="User ID",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Successful operation",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Booking")
- *         )
+ *         description="Fetch  booking by user."
  *     ),
  *     @OA\Response(
- *         response=404,
- *         description="No bookings found"
+ *         response=500,
+ *         description="Bad request - missing or invalid ID."
  *     )
  * )
  */
+
 Flight::route('GET /bookings/user/@user_id', function($user_id) {
     $service = Flight::bookings_service();
     Flight::json($service->get_by_user_id($user_id));
 });
 
-
 /**
  * @OA\Post(
  *     path="/bookings",
- *     tags={"Bookings"},
- *     summary="Create a booking",
+ *     tags={"bookings"},
+ *     summary="Add a new booking",
  *     @OA\RequestBody(
- *         description="Booking object that needs to be added",
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/BookingInput")
+ *         @OA\JsonContent(
+ *             required={"user_id", "package_id"},
+ *             @OA\Property(property="user_id", type="integer", example="3"),
+ *             @OA\Property(property="package_id", type="imteger", example="1"),
+ *             
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Booking created",
- *         @OA\JsonContent(ref="#/components/schemas/Booking")
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Invalid input"
+ *         description="Booking added successfully"
  *     )
  * )
  */
+
 Flight::route('POST /bookings', function() {
     $service = Flight::bookings_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->add($data));
 });
 
-
 /**
  * @OA\Put(
  *     path="/bookings/{id}",
- *     tags={"Bookings"},
  *     summary="Update a booking",
+ *     tags={"bookings"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID of booking to update",
  *         @OA\Schema(type="integer")
  *     ),
  *     @OA\RequestBody(
- *         description="Booking object that needs to be updated",
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/BookingInput")
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", enum={"pending", "confirmed", "cancelled"})
+ *         )
  *     ),
  *     @OA\Response(
- *         response=200,
- *         description="Booking updated",
- *         @OA\JsonContent(ref="#/components/schemas/Booking")
- *     ),
+ *         response="200",
+ *          description="Booking updated"),
  *     @OA\Response(
- *         response=404,
- *         description="Booking not found"
- *     )
+ *         response="404",
+ *         description="Booking not found")
  * )
  */
+
+
 Flight::route('PUT /bookings/@id', function($id) {
     $service = Flight::bookings_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update($data, $id));
 });
 
-
 /**
  * @OA\Delete(
  *     path="/bookings/{id}",
- *     tags={"Bookings"},
- *     summary="Delete a booking",
+ *     summary="Delete a booking by ID.",
+ *     description="Delete a booking from the database using their ID.",
+ *     tags={"bookings"},
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID of booking to delete",
- *         @OA\Schema(type="integer")
+ *         description="Booking ID",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Booking deleted"
+ *         description="Booking deleted successfully."
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Booking not found"
+ *         description="Booking not found."
  *     )
  * )
  */
+
 Flight::route('DELETE /bookings/@id', function($id) {
     $service = Flight::bookings_service();
     $service->delete($id);

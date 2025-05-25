@@ -2,7 +2,7 @@
 /**
 * @OA\Info(
 *     title="API",
-*     description=Travel API",
+*     description="Travel API",
 *     version="1.0",
 *     @OA\Contact(
 *         email="faris.fejzic@stu.ibu.edu.ba",
@@ -12,7 +12,7 @@
 */
 /**
 * @OA\Server(
-*     url= "http://localhost/FarisFejzic/Web-project/backend",
+*     url= "http://localhost/FarisFejzic/Web-project/backend/",
 *     description="API server"
 * )
 */

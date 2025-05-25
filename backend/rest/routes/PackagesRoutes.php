@@ -3,126 +3,155 @@
 /**
  * @OA\Get(
  *     path="/packages",
- *     tags={"Packages"},
- *     summary="List all packages",
+ *     tags={"packages"},
+ *     summary="Return all packages from the API.",
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
- *         description="Success",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Package")
- *         )
+ *         description="List of packages."
  *     )
  * )
  */
+
 Flight::route('GET /packages', function() {
     $service = Flight::packages_service();
     Flight::json($service->get_all());
 });
 
-
 /**
- * @OA\Get(
- *     path="/packages/{id}",
- *     tags={"Packages"},
- *     summary="Get package by ID",
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Success",
- *         @OA\JsonContent(ref="#/components/schemas/Package")
- *     ),
- *     @OA\Response(response=404, description="Not Found")
- * )
- */
+* @OA\Get(
+*     path="/packages/{id}",
+*     tags={"packages"},
+*     summary="Get package details by ID",
+*     security={
+ *         {"ApiKey": {}}
+ *     }, 
+*     @OA\Parameter(
+*         name="id",
+*         in="path",
+*         required=true,
+*         description="Package ID",
+*         @OA\Schema(type="integer", example=5)
+*     ),
+*     @OA\Response(
+*         response=200,
+*         description="Package details"
+*     ),
+*     @OA\Response(
+*         response=404,
+*         description="Package not found"
+*     )
+* )
+*/
+
 Flight::route('GET /packages/@id', function($id) {
     $service = Flight::packages_service();
     Flight::json($service->get_by_id($id));
 });
 
-
 /**
- * @OA\Get(
- *     path="/packages/destination/{destination}",
- *     tags={"Packages"},
- *     summary="Find packages by destination",
- *     @OA\Parameter(
- *         name="destination",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="string")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Success",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Package")
- *         )
- *     )
- * )
- */
+* @OA\Get(
+*     path="/packages/{destination}",
+*     tags={"packages"},
+*     summary="Get packages details by destination",
+*     security={
+ *         {"ApiKey": {}}
+ *     }, 
+*     @OA\Parameter(
+*         name="destination",
+*         in="path",
+*         required=true,
+*         description="Packages destination",
+*         @OA\Schema(type="string", example="France")
+*     ),
+*     @OA\Response(
+*         response=200,
+*         description="Package details"
+*     ),
+*     @OA\Response(
+*         response=404,
+*         description="Package not found"
+*     )
+* )
+*/
+
 Flight::route('GET /packages/destination/@destination', function($destination) {
     $service = Flight::packages_service();
     Flight::json($service->get_by_destination($destination));
 });
 
-
-
 /**
  * @OA\Get(
- *     path="/packages/available",
- *     tags={"Packages"},
- *     summary="Get available packages",
+ *     path="/packages/{status}",
+ *     tags={"packages"},
+ *     summary="Get packages by status",
+ *     description="Retrieve packages filtered by their active status",
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
+ *     @OA\Parameter(
+ *         name="status",
+ *         in="path",
+ *         required=true,
+ *         description="Item status",
+ *         @OA\Schema(
+ *             type="string",
+ *             enum={"active", "inactive"},
+ *             example="active"
+ *         )
+ *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Success",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Package")
- *         )
+ *         description="List of packages with specified status",
+ *         
+ *     ),
+ *     
+ *     @OA\Response(
+ *         response=404,
+ *         description="No packages found",
+ *         
  *     )
  * )
  */
+
 Flight::route('GET /packages/available', function() {
     Flight::json(Flight::packages_service()->get_available_packages());
 });
 
-
 /**
  * @OA\Post(
  *     path="/packages",
- *     tags={"Packages"},
- *     summary="Create new package",
+ *     tags={"packages"},
+ *     summary="Add a new package",
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/PackageInput")
+ *         @OA\JsonContent(
+ *             required={"id"},
+ *             @OA\Property(property="id", type="integer", example="3"),
+ *             
+ *             
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Created",
- *         @OA\JsonContent(ref="#/components/schemas/Package")
- *     ),
- *     @OA\Response(response=400, description="Bad Request")
+ *         description="package added successfully"
+ *     )
  * )
  */
+
 Flight::route('POST /packages', function() {
     $service = Flight::packages_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->add($data));
 });
 
-
 /**
  * @OA\Put(
  *     path="/packages/{id}",
- *     tags={"Packages"},
- *     summary="Update package",
+ *     summary="Update a package",
+ *     tags={"packages"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -131,38 +160,53 @@ Flight::route('POST /packages', function() {
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/PackageInput")
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string", enum={"active", "inactive"})
+ *         )
  *     ),
  *     @OA\Response(
- *         response=200,
- *         description="Success",
- *         @OA\JsonContent(ref="#/components/schemas/Package")
- *     ),
- *     @OA\Response(response=404, description="Not Found")
+ *         response="200",
+ *          description="Package updated"),
+ *     @OA\Response(
+ *         response="404",
+ *         description="Package not found")
  * )
  */
+
 Flight::route('PUT /packages/@id', function($id) {
     $service = Flight::packages_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update($data, $id));
 });
 
-
 /**
  * @OA\Delete(
  *     path="/packages/{id}",
- *     tags={"Packages"},
- *     summary="Delete package",
+ *     summary="Delete a package by ID.",
+ *     description="Delete a package from the database using their ID.",
+ *     tags={"packages"},
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         @OA\Schema(type="integer")
+ *         description="package ID",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
- *     @OA\Response(response=200, description="Deleted"),
- *     @OA\Response(response=404, description="Not Found")
+ *     @OA\Response(
+ *         response=200,
+ *         description="Package deleted successfully."
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Package not found."
+ *     )
  * )
  */
+
 Flight::route('DELETE /packages/@id', function($id) {
     $service = Flight::packages_service();
     $service->delete($id);

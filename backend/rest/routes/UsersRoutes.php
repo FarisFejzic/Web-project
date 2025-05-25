@@ -4,18 +4,17 @@
 /**
  * @OA\Get(
  *     path="/users",
- *     tags={"Users"},
- *     summary="List all users",
+ *     tags={"users"},
+ *     summary="Return all user from the API.",
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Response(
  *         response=200,
- *         description="Success",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/User")
- *         )
+ *         description="List of users."
  *     )
  * )
- */ 
+ */
 
 Flight::route('GET /users', function() {
     $service = Flight::users_service();
@@ -23,27 +22,30 @@ Flight::route('GET /users', function() {
 });
 
 /**
- * @OA\Get(
- *     path="/users/{id}",
- *     tags={"Users"},
- *     summary="Get user by ID",
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Success",
- *         @OA\JsonContent(ref="#/components/schemas/User")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="User not found"
- *     )
- * )
- */
+* @OA\Get(
+*     path="/users/{id}",
+*     tags={"users"},
+*     summary="Get user details by ID",
+*     security={
+ *         {"ApiKey": {}}
+ *     }, 
+*     @OA\Parameter(
+*         name="id",
+*         in="path",
+*         required=true,
+*         description="user ID",
+*         @OA\Schema(type="integer", example=5)
+*     ),
+*     @OA\Response(
+*         response=200,
+*         description="User details"
+*     ),
+*     @OA\Response(
+*         response=404,
+*         description="User not found"
+*     )
+* )
+*/
 
 Flight::route('GET /users/@id', function($id) {
     $service = Flight::users_service();
@@ -51,27 +53,30 @@ Flight::route('GET /users/@id', function($id) {
 });
 
 /**
- * @OA\Get(
- *     path="/users/email/{email}",
- *     tags={"Users"},
- *     summary="Get user by email",
- *     @OA\Parameter(
- *         name="email",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="string", format="email")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Success",
- *         @OA\JsonContent(ref="#/components/schemas/User")
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="User not found"
- *     )
- * )
- */
+* @OA\Get(
+*     path="/users/email/{email}",
+*     tags={"users"},
+*     summary="Get user details by email",
+*     security={
+ *         {"ApiKey": {}}
+ *     }, 
+*     @OA\Parameter(
+*         name="email",
+*         in="path",
+*         required=true,
+*         description="user email",
+*         @OA\Schema(type="email", example="exammple@gmail.com")
+*     ),
+*     @OA\Response(
+*         response=200,
+*         description="User details"
+*     ),
+*     @OA\Response(
+*         response=404,
+*         description="User not found"
+*     )
+* )
+*/
 
 Flight::route('GET /users/email/@email', function($email) {
     $service = Flight::users_service();
@@ -81,20 +86,20 @@ Flight::route('GET /users/email/@email', function($email) {
 /**
  * @OA\Post(
  *     path="/users",
- *     tags={"Users"},
- *     summary="Create a user",
+ *     tags={"users"},
+ *     summary="Add a new userw",
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/UserInput")
+ *         @OA\JsonContent(
+ *             required={"email"},
+ *             @OA\Property(property="email", type="email", example="example@gmail.com"),
+ *             
+ *             
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="User created,
- *         @OA\JsonContent(ref="#/components/schemas/User")
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Invalid input"
+ *         description="User added successfully"
  *     )
  * )
  */
@@ -108,8 +113,8 @@ Flight::route('POST /users', function() {
 /**
  * @OA\Put(
  *     path="/users/{id}",
- *     tags={"Users"},
- *     summary="Update user",
+ *     summary="Update a user",
+ *     tags={"users"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
@@ -118,17 +123,17 @@ Flight::route('POST /users', function() {
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/UserUpdate")
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="role", type="string", enum={"user", "admin"})
+ *         )
  *     ),
  *     @OA\Response(
- *         response=200,
- *         description="User updated",
- *         @OA\JsonContent(ref="#/components/schemas/User")
- *     ),
+ *         response="200",
+ *          description="User updated"),
  *     @OA\Response(
- *         response=404,
- *         description="User not found"
- *     )
+ *         response="404",
+ *         description="User not found")
  * )
  */
 
@@ -142,21 +147,26 @@ Flight::route('PUT /users/@id', function($id) {
 /**
  * @OA\Delete(
  *     path="/users/{id}",
- *     tags={"Users"},
- *     summary="Delete user",
+ *     summary="Delete a user by ID.",
+ *     description="Delete a user from the database using their ID.",
+ *     tags={"users"},
+ *     security={
+ *         {"ApiKey": {}}
+ *     },
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         @OA\Schema(type="integer")
+ *         description="user ID",
+ *         @OA\Schema(type="integer", example=7)
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="User deleted"
+ *         description="User deleted successfully."
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="User not found"
+ *         description="User not found."
  *     )
  * )
  */

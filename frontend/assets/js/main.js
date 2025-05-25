@@ -94,25 +94,4 @@
 
 // My JS
 
-function toggleForm() {
-    const registerForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm');
-    const modalTitle = document.querySelector('.modal-title');
-    const submitBtn = document.querySelector('.modal-footer button');
-    
-    if (registerForm.style.display === 'none') {
-        registerForm.style.display = 'block';
-        loginForm.style.display = 'none';
-        modalTitle.textContent = 'Register';
-        submitBtn.textContent = 'Register';
-    } else {
-        registerForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        modalTitle.textContent = 'Log In';
-        submitBtn.textContent = 'Log In';
-    }
-}
 
-function handleSubmit() {
-        $('#authModal').modal('hide');
-}
