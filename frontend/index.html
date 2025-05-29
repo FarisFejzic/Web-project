@@ -77,12 +77,10 @@
                 <span class="fa fa-bars"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav ms-auto py-0">
-                    <a href="#about" class="nav-item nav-link">About</a>
-                    <a href="#package" class="nav-item nav-link">Packages</a>
-                    <a href="#adminpanel" class="nav-item nav-link">Admin Panel</a>
+                <div class="navbar-nav ms-auto py-0" id="navBar">
+                    
                 </div>
-                <a href="#" class="btn btn-primary rounded-pill py-2 px-4" data-bs-toggle="modal" data-bs-target="#authModal">Register</a>
+                
             </div>
         </nav>
 
@@ -99,7 +97,8 @@
     </div>
     <!-- Navbar & Hero End -->
 
-    <div class="modal fade" id="authModal" tabindex="-1">
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -107,55 +106,69 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Register Form -->
                     <form id="registerForm" class="auth-form">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <input type="text" class="form-control" placeholder="First Name" required>
+                                <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <input type="text" class="form-control" placeholder="Last Name" required>
+                                <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Email" required>
+                            <input type="email" name="email" class="form-control" placeholder="Email" required>
                         </div>
                         <div class="mb-3">
-                            <input type="password" class="form-control" placeholder="Password" minlength="6" required>
+                            <input type="password" name="password" class="form-control" placeholder="Password" minlength="6" required>
                         </div>
                         <div class="mb-3">
-                            <input type="password" class="form-control" placeholder="Confirm Password" minlength="6" required>
+                            <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" minlength="6" required>
                         </div>
-                        <p class="text-center small">Already have an account? <a href="#" onclick="toggleForm()">Log in!</a></p>
-                    </form>
-    
-                    <!-- Login Form -->
-                    <form id="loginForm" class="auth-form" style="display: none;">
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Email" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" placeholder="Password" required>
-                        </div>
-                        <p class="text-center small">Don't have an account? <a href="#" onclick="toggleForm()">Register!</a></p>
+                        <p class="text-center small">
+                        Already have an account? 
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Log in!</a>
+                        </p>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
                     </form>
                 </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-primary w-100" onclick="handleSubmit()">Register</button>
-                </div>
+                
             </div>
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Log In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" class="auth-form">
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password"class="form-control" placeholder="Password" required>
+                    </div>
+                    <p class="text-center small">
+                        Don't have an account? 
+                        <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">Register!</a>
+                    </p>
+                    <button type="submit" class="btn btn-primary w-100">Log In</button>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    
 
 
-    <main id="spapp" role="main">
-        <section id="adminpanel"></section>
-        <section id="404"></section>
-        <section id="package"></section>
-        <section id="viewmore"></section>
-        <section id="about" data-load="about.html" ></section>
-    </main>
+
+    <main id="spapp" role="main"></main>
 
 
 
@@ -184,6 +197,13 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/jquery.spapp.js"></script>
     <script src="assets/js/custom.js"></script>
+    <script src="utils/constants.js"></script>
+    <script src="utils/utils.js"></script>
+    <script src="utils/rest-client.js"></script>
+    <script src="services/user-service.js"></script>
+    <script>
+        UserService.init();     
+    </script>
 </body>
 
 </html>
