@@ -1,6 +1,6 @@
 var UserService = {
   init: function () {
-    UserService.generateMenuItems();
+    
     $("#loginForm").validate({
         
       submitHandler: function (form) {
@@ -18,12 +18,8 @@ var UserService = {
             },
             password: {
                 required: true,
-                minlength: 6,
-                containsNumber: true
-            },
-            confirm_password: {
-                required: true,
-                equalTo: "#registerPassword"
+                minlength: 6
+                
             }
 
         }, 
@@ -37,18 +33,16 @@ var UserService = {
             password: {
                 required: "Password is required",
                 minlength: "Password must be at least 6 characters long",
-                containsNumber: "Password must contain at least one number"
-            },
-            confirm_password: {
-                required: "Please confirm your password",
-                equalTo: "Passwords do not match"
+                
             }
+            
         },
       submitHandler: function (form) {
         var entity = Object.fromEntries(new FormData(form).entries());
         UserService.register(entity);
       },
     }); 
+    UserService.generateMenuItems();
   },
   login: function (entity) {
     $.ajax({
@@ -86,11 +80,9 @@ var UserService = {
     });
   },
 
-  logout: function () {
+   logout: function () {
     localStorage.clear();
-    UserService.generateMenuItems();
-    toastr.info("You have been logged out.");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.location.replace("index.html");
   },
 
   generateMenuItems: function() {
@@ -117,7 +109,7 @@ var UserService = {
             case Constants.USER_ROLE:
                 nav = '<a href="#about" class="nav-item nav-link">About</a>'+
                       '<a href="#package" class="nav-item nav-link">Packages</a>'+
-                      '<a href="#" class="nav-item nav-link" onClick="logout()">Log out</a>';
+                      '<button class="btn btn-primary" onclick="UserService.logout()">Logout</button>';
                 $("#navBar").html(nav);
 
                 main = '<section id="404"></section>'+
@@ -130,7 +122,7 @@ var UserService = {
                 nav = '<a href="#about" class="nav-item nav-link">About</a>'+
                       '<a href="#package" class="nav-item nav-link">Packages</a>'+
                       '<a href="#adminpanel" class="nav-item nav-link">Admin Panel</a>'+
-                      '<a href="#" class="nav-item nav-link" onClick="logout()">Log out</a>';
+                      '<button class="btn btn-primary" onclick="UserService.logout()">Logout</button>';
                 $("#navBar").html(nav);
 
                 main = '<section id="adminpanel"></section>'+

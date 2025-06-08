@@ -30,7 +30,7 @@ class AuthMiddleware {
         }
     }
 
-    function authorizePermission($permission) {
+    public function authorizePermission($permission) {
         $user = Flight::get('user');
         if (!in_array($permission, $user->permissions)) {
             Flight::halt(403, 'Access denied: permission missing');

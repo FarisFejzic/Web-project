@@ -1,12 +1,14 @@
 <?php
 require 'vendor/autoload.php'; //run autoloader
+
+require 'rest/config.php';
 require "rest/services/BookingsService.php";
 require "rest/services/PackagesService.php";
 require "rest/services/PaymentsService.php";
 require "rest/services/ReviewsService.php";
 require "rest/services/UsersService.php";
 require "rest/services/AuthService.php";
-require "middleware/AuthMiddleware.php";
+//require "middleware/AuthMiddleware.php";
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

@@ -16,6 +16,7 @@
  */
 
 Flight::route('GET /packages', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::packages_service();
     Flight::json($service->get_all());
 });
@@ -47,6 +48,7 @@ Flight::route('GET /packages', function() {
 */
 
 Flight::route('GET /packages/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::packages_service();
     Flight::json($service->get_by_id($id));
 });
@@ -78,6 +80,7 @@ Flight::route('GET /packages/@id', function($id) {
 */
 
 Flight::route('GET /packages/destination/@destination', function($destination) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::packages_service();
     Flight::json($service->get_by_destination($destination));
 });
@@ -117,6 +120,7 @@ Flight::route('GET /packages/destination/@destination', function($destination) {
  */
 
 Flight::route('GET /packages/available', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     Flight::json(Flight::packages_service()->get_available_packages());
 });
 
@@ -128,8 +132,13 @@ Flight::route('GET /packages/available', function() {
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"id"},
- *             @OA\Property(property="id", type="integer", example="3"),
+ *             required={"title","destination","duration_days", "price", "num_of_people", "status"},
+ *             @OA\Property(property="title", type="string", example="Luxury Paris Tour"),
+ *             @OA\Property(property="destination", type="string", example="France"),
+ *             @OA\Property(property="duration_days", type="integer", example=7),
+ *             @OA\Property(property="price", type="number", format="float", example=1999.99),
+ *             @OA\Property(property="num_of_people", type="integer", example=2),
+ *             @OA\Property(property="status", type="string", enum={"active", "inactive"}, example="active"),
  *             
  *             
  *         )
@@ -142,6 +151,7 @@ Flight::route('GET /packages/available', function() {
  */
 
 Flight::route('POST /packages', function() {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::packages_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->add($data));
@@ -175,6 +185,7 @@ Flight::route('POST /packages', function() {
  */
 
 Flight::route('PUT /packages/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::packages_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update($data, $id));
@@ -208,6 +219,7 @@ Flight::route('PUT /packages/@id', function($id) {
  */
 
 Flight::route('DELETE /packages/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::packages_service();
     $service->delete($id);
     Flight::json(['message' => "Package with ID $id deleted"]);
