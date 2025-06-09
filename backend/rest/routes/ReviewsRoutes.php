@@ -16,6 +16,7 @@
  */
 
 Flight::route('GET /reviews', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::reviews_service();
     Flight::json($service->get_all());
 });
@@ -47,6 +48,7 @@ Flight::route('GET /reviews', function() {
 */
 
 Flight::route('GET /reviews/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::reviews_service();
     Flight::json($service->get_by_id($id));
 });
@@ -78,6 +80,7 @@ Flight::route('GET /reviews/@id', function($id) {
 */
 
 Flight::route('GET /reviews/review/@review_id', function($review_id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::reviews_service();
     Flight::json($service->get_reviews_by_review_id($review_id));
 });
@@ -109,6 +112,7 @@ Flight::route('GET /reviews/review/@review_id', function($review_id) {
  */
 
 Flight::route('GET /reviews/user/@user_id', function($user_id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     Flight::json(Flight::reviews_service()->get_reviews_by_user_id($user_id));
 });
 
@@ -120,10 +124,13 @@ Flight::route('GET /reviews/user/@user_id', function($user_id) {
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"id"},
- *             @OA\Property(property="id", type="integer", example="8"),
- *             
- *             
+ *             required={"user_id","package_id", "rating"},
+ *             @OA\Property(property="user_id", type="integer", example="2"),
+ *             @OA\Property(property="package_id", type="integer", example="3"),
+ *             @OA\Property(property="rating", type="integer", format="int32", minimum=1, maximum=5, example=4),
+ *             @OA\Property(property="comment", type="string", example="Great experience!"),
+ *             @OA\Property(property="created_at", type="string", format="date-time", example="2025-06-15 10:30:00")                              
+ * 
  *         )
  *     ),
  *     @OA\Response(
@@ -135,6 +142,7 @@ Flight::route('GET /reviews/user/@user_id', function($user_id) {
 
 
 Flight::route('POST /reviews', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::reviews_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->add($data));
@@ -168,6 +176,7 @@ Flight::route('POST /reviews', function() {
  */
 
 Flight::route('PUT /reviews/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::reviews_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update($data, $id));
@@ -202,6 +211,7 @@ Flight::route('PUT /reviews/@id', function($id) {
  */
 
 Flight::route('DELETE /reviews/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::reviews_service();
     $service->delete($id);
     Flight::json(['message' => "Review with ID $id deleted"]);

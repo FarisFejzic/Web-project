@@ -15,7 +15,7 @@ class UsersService extends BaseService {
     public function create_user($user) {
         // Validate required fields
         if (empty($user['first_name']) || empty($user['last_name']) || 
-            empty($user['email']) || empty($user['password_hash'])) {
+            empty($user['email']) || empty($user['password'])) {
             throw new Exception("Missing required user fields");
         }
         

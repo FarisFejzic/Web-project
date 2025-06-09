@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * @OA\Get(
  *     path="/users",
@@ -17,6 +16,7 @@
  */
 
 Flight::route('GET /users', function() {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::users_service();
     Flight::json($service->get_all());
 });
@@ -48,6 +48,7 @@ Flight::route('GET /users', function() {
 */
 
 Flight::route('GET /users/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::users_service();
     Flight::json($service->get_by_id($id));
 });
@@ -79,6 +80,7 @@ Flight::route('GET /users/@id', function($id) {
 */
 
 Flight::route('GET /users/email/@email', function($email) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::users_service();
     Flight::json($service->get_by_email($email));
 });
@@ -87,12 +89,16 @@ Flight::route('GET /users/email/@email', function($email) {
  * @OA\Post(
  *     path="/users",
  *     tags={"users"},
- *     summary="Add a new userw",
+ *     summary="Add a new user",
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"email"},
+ *             required={"first_name","last_name","email","password", "role"},
+ *             @OA\Property(property="first_name", type="string", example="John"),
+ *             @OA\Property(property="last_name", type="string", example="Doe"),
  *             @OA\Property(property="email", type="email", example="example@gmail.com"),
+ *             @OA\Property(property="password", type="string", format="password", example="securepassword"),
+ *             @OA\Property(property="role", type="string", enum={"user", "admin"}, example="user"),
  *             
  *             
  *         )
@@ -105,6 +111,7 @@ Flight::route('GET /users/email/@email', function($email) {
  */
 
 Flight::route('POST /users', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::users_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->create_user($data));
@@ -138,6 +145,7 @@ Flight::route('POST /users', function() {
  */
 
 Flight::route('PUT /users/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::users_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update_user($data, $id));
@@ -172,6 +180,7 @@ Flight::route('PUT /users/@id', function($id) {
  */
 
 Flight::route('DELETE /users/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::users_service();
     $service->delete($id);
     Flight::json(['message' => "User with ID $id deleted"]);

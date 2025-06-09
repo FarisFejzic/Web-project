@@ -58,19 +58,13 @@ Flight::route("POST /login", function() {
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"password", "email"},
-     *                 @OA\Property(
-     *                     property="password",
-     *                     type="string",
-     *                     example="some_password",
-     *                     description="User password"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="email",
-     *                     type="string",
-     *                     example="demo@gmail.com",
-     *                     description="User email"
-     *                 )
+     *                 
+     *                 required={"first_name","last_name","email","password", "role"},
+     *             @OA\Property(property="first_name", type="string", example="John"),
+     *             @OA\Property(property="last_name", type="string", example="Doe"),
+     *             @OA\Property(property="email", type="email", example="example@gmail.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="securepassword"),
+     *             @OA\Property(property="role", type="string", enum={"user", "admin"}, example="user"),
      *             )
      *         )
      *     ),

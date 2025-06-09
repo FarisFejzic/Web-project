@@ -16,6 +16,7 @@
  */
 
 Flight::route('GET /payments', function() {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::payments_service();
     Flight::json($service->get_all());
 });
@@ -47,6 +48,7 @@ Flight::route('GET /payments', function() {
 */
 
 Flight::route('GET /payments/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::payments_service();
     Flight::json($service->get_by_id($id));
 });
@@ -79,6 +81,7 @@ Flight::route('GET /payments/@id', function($id) {
  */
 
 Flight::route('GET /payments/status/@status', function($status) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::payments_service();
     Flight::json($service->get_by_status($status));
 });
@@ -92,10 +95,12 @@ Flight::route('GET /payments/status/@status', function($status) {
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"id"},
- *             @OA\Property(property="id", type="integer", example="3"),
- *             
- *             
+ *             required={"booking_id","amount", "payment_method"},
+ *             @OA\Property(property="booking_id", type="integer", example="3"),
+ *             @OA\Property(property="amount", type="number", format="float", example="150.00"),  
+ *             @OA\Property(property="payment_method", type="string", enum={"credit_card", "paypal", "bank_transfer"}, example="credit_card"),
+ *             @OA\Property(property="status", type="string", enum={"pending", "completed", "failed"}, example="pending"),
+ *             @OA\Property(property="payment_date", type="string", format="date-time", example="2025-06-10 14:30:00")
  *         )
  *     ),
  *     @OA\Response(
@@ -106,6 +111,7 @@ Flight::route('GET /payments/status/@status', function($status) {
  */
 
 Flight::route('POST /payments', function() {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::payments_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->add($data));
@@ -139,6 +145,7 @@ Flight::route('POST /payments', function() {
  */
 
 Flight::route('PUT /payments/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::payments_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update($data, $id));
@@ -172,6 +179,7 @@ Flight::route('PUT /payments/@id', function($id) {
  */
 
 Flight::route('DELETE /payments/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::payments_service();
     $service->delete($id);
     Flight::json(['message' => "Payment with ID $id deleted"]);

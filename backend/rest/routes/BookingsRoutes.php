@@ -18,6 +18,7 @@
 
 
 Flight::route('GET /bookings', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::bookings_service();
     Flight::json($service->get_all());
 });
@@ -49,6 +50,7 @@ Flight::route('GET /bookings', function() {
  */
 
 Flight::route('GET /bookings/@id', function($id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::bookings_service();
     Flight::json($service->get_by_id($id));
 });
@@ -80,6 +82,7 @@ Flight::route('GET /bookings/@id', function($id) {
  */
 
 Flight::route('GET /bookings/user/@user_id', function($user_id) {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::bookings_service();
     Flight::json($service->get_by_user_id($user_id));
 });
@@ -92,9 +95,12 @@ Flight::route('GET /bookings/user/@user_id', function($user_id) {
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             required={"user_id", "package_id"},
+ *             required={"user_id", "package_id","travel_date"},
  *             @OA\Property(property="user_id", type="integer", example="3"),
  *             @OA\Property(property="package_id", type="imteger", example="1"),
+ *             @OA\Property(property="booking_date", type="string", format="date-time", example="2025-06-10T14:30:00Z", readOnly=true),
+ *             @OA\Property(property="travel_date", type="string", format="date", example="2025-07-15"),
+ *             @OA\Property(property="status", type="string", enum={"pending", "confirmed", "cancelled"}, example="pending")
  *             
  *         )
  *     ),
@@ -106,6 +112,7 @@ Flight::route('GET /bookings/user/@user_id', function($user_id) {
  */
 
 Flight::route('POST /bookings', function() {
+    Flight::auth_middleware()->authorizeRoles([Roles::USER, Roles::ADMIN]);
     $service = Flight::bookings_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->add($data));
@@ -140,6 +147,7 @@ Flight::route('POST /bookings', function() {
 
 
 Flight::route('PUT /bookings/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::bookings_service();
     $data = Flight::request()->data->getData();
     Flight::json($service->update($data, $id));
@@ -173,6 +181,7 @@ Flight::route('PUT /bookings/@id', function($id) {
  */
 
 Flight::route('DELETE /bookings/@id', function($id) {
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     $service = Flight::bookings_service();
     $service->delete($id);
     Flight::json(['message' => "Booking with ID $id deleted"]);
